@@ -1,12 +1,15 @@
 /** @type {import('tailwindcss').Config} */
-export default {
+module.exports = {
   content: [
-    "./index.html",
-    "./src/**/*.{js,jsx,ts,tsx}",// ADD THE PATHS TO ALL OF TEMPLATE FILES
+    "./src/**/*.{html,js,jsx,ts,tsx}", // Adjust the paths based on your project structure
   ],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        background: "#f5f5f5", // Background color for the page
+        text: "#333333", // Text color
+      },
+    },
   },
   plugins: [],
-}
-
+};
