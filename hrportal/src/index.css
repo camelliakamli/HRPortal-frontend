@@ -3,10 +3,16 @@
 @tailwind utilities;
 
 body {
-  @apply bg-background text-text font-sans;
+  @apply bg-[#F4F5F7] text-text font-sans;
 }
 
 @layer utilities {
+  .pageContainer {
+    @apply bg-white p-2 w-[90%] mx-auto rounded-md h-full text-slate-800;
+    margin-left: 6px;
+    margin-right: 6px;
+  }
+
   .bg-blue-gradient {
     background: linear-gradient(
       to right,
@@ -23,5 +29,73 @@ body {
   }
   .text-text {
     color: #333333; /* Replace with your desired color */
+  }
+  .sidebar-item {
+    @apply flex items-center justify-center;
+    border-radius: 8px;
+  }
+
+  /* Define custom classes here */
+  .bg-background {
+    @apply bg-[#F8F8F8];
+  }
+  .text-text {
+    @apply text-slate-800;
+  }
+  .titleText {
+    @apply text-slate-800 font-bold text-[26px] px-2;
+  }
+
+  /* Typography Utilities */
+  .regular-40 {
+    @apply text-[40px] font-[400] leading-[120%];
+  }
+
+  .regular-32 {
+    @apply text-[32px] font-[400];
+  }
+
+  .regular-24 {
+    @apply text-[24px] font-[400];
+  }
+
+  .regular-20 {
+    @apply text-[20px] font-[400];
+  }
+
+  .regular-18 {
+    @apply text-[18px] font-[400];
+  }
+
+  .regular-16 {
+    @apply text-[16px] font-[400];
+  }
+
+  .regular-14 {
+    @apply text-[14px] font-[400];
+  }
+
+  .medium-18 {
+    @apply text-[18px] font-[600];
+  }
+
+  .medium-22 {
+    @apply text-[22px] font-[600];
+  }
+
+  .bold-32 {
+    @apply text-[32px] font-[700];
+  }
+
+  .bold-24 {
+    @apply text-[24px] font-[700];
+  }
+
+  .bold-20 {
+    @apply text-[20px] font-[700];
+  }
+
+  .bold-18 {
+    @apply text-[18px] font-[700];
   }
 }

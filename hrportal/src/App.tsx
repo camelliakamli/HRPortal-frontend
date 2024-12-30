@@ -1,9 +1,13 @@
-import Login from './pages/auth/login';
-//import LoginForm from './components/loginForm';
-function App() {
+import React from "react";
+import { BrowserRouter as Router } from "react-router-dom";
+import AppRoutes from "./routes/routes";
+
+const App: React.FC = () => {
   return (
-    <Login />
+    <Router>
+      <AppRoutes />
+    </Router>
   );
-}
+};
 
 export default App;

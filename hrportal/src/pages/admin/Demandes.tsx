@@ -1,7 +1,7 @@
 import React from 'react';
 
 
-const Documents: React.FC = () => {
+const Demandes: React.FC = () => {
   return (
     <div>
       <h1>Documents</h1>
@@ -9,4 +9,4 @@ const Documents: React.FC = () => {
   );
 };
 
-export default Documents;
+export default Demandes;
