@@ -1,43 +1,32 @@
-import React from 'react';
-import { Outlet } from 'react-router-dom';
+import React, { ReactNode } from 'react';
 import Sidebar from '../components/Sidebar';
-import { Box, Drawer } from '@mui/material';
 import Header from '../components/Header'; 
+import { Outlet } from 'react-router-dom';
 
-const DashboardLayout: React.FC = () => {
+interface DashboardLayoutProps {
+  children?: ReactNode; 
+}
+
+const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   return (
-    <Box className="flex">
-      <Drawer
-        sx={{
-          width: 250,
-          flexShrink: 0,
-          '& .MuiDrawer-paper': {
-            width: 250,
-            boxSizing: 'border-box',
-          },
-        }}
-        variant="permanent"
-        anchor="left"
+    <div className="flex h-screen overflow-y-auto">
+      {/* Sidebar with fixed width */}
+      <Sidebar />
+
+      {/* Main Content */}
+      <div
+        className="transition-all duration-300 w-[98%] overflow-x-scroll rounded-sm"
+        style={{ marginLeft: '250px' }} 
       >
-        <Sidebar />
-      </Drawer>
-      <Box
-        component="main"
-        sx={{
-          flexGrow: 1,
-          bgcolor: 'background.default',
-          padding: 0,
-          display: 'flex',
-          flexDirection: 'column', 
-          marginLeft: '12px',   
-          marginRight: '12px', 
-          borderRadius: '8px', 
-        }}
-      >
+        {/* Header */}
         <Header />
-        <Outlet /> 
-      </Box>
-    </Box>
+
+        {/* Main Content (children or Outlet) */}
+        <main className="flex-1 pl-8 pt-4">
+          {children || <Outlet />}
+        </main>
+      </div>
+    </div>
   );
 };
 

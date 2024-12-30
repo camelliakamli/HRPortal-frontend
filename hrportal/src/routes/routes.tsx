@@ -6,7 +6,7 @@ import Home from '../pages/admin/Home';
 import Employees from '../pages/admin/Employees';
 import Documents from '../pages/admin/Documents';
 import Requests from '../pages/admin/Demandes';
-import Payroll  from '../pages/admin/Payroll';
+import Payroll from '../pages/admin/Payroll';
 import Hierarchy from '../pages/admin/Hierarchy';
 
 const AppRoutes: React.FC = () => {

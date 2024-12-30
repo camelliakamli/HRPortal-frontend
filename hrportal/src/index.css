@@ -7,43 +7,41 @@ body {
 }
 
 @layer utilities {
+  .ant-card {
+    border-radius: 6px !important;
+  }
+
   .pageContainer {
-    @apply bg-white p-2 w-[90%] mx-auto rounded-md h-full text-slate-800;
-    margin-left: 6px;
-    margin-right: 6px;
+    @apply bg-white p-2 w-[99%] rounded-lg h-full text-slate-800;
   }
 
   .bg-blue-gradient {
-    background: linear-gradient(
-      to right,
-      #109cf1,
-      #22aafc
-    ); /* Dark blue to light blue */
+    background: linear-gradient(to right, #109cf1, #22aafc);
   }
+
   .bg-blue-gradient-hover {
-    background: linear-gradient(
-      to right,
-      #0a88d6,
-      #209fee
-    ); /* Slightly lighter gradient */
+    background: linear-gradient(to right, #0a88d6, #209fee);
   }
+
   .text-text {
-    color: #333333; /* Replace with your desired color */
+    color: #333333;
   }
+
   .sidebar-item {
     @apply flex items-center justify-center;
     border-radius: 8px;
   }
 
-  /* Define custom classes here */
   .bg-background {
     @apply bg-[#F8F8F8];
   }
+
   .text-text {
     @apply text-slate-800;
   }
+
   .titleText {
-    @apply text-slate-800 font-bold text-[26px] px-2;
+    @apply text-slate-800 font-bold text-[24px] px-2;
   }
 
   /* Typography Utilities */
