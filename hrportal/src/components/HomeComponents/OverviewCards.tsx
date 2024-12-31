@@ -51,8 +51,8 @@ const OverviewCards: React.FC = () => {
     <div className="pageContainer flex flex-col gap-4 p-4">
       {/* Title Section */}
       <div className="flex items-center">
-        <AppstoreOutlined style={{ fontSize: '28px', color: '#323743', marginRight: '8px' }} />
-        <h2 style={{ fontSize: '22px', lineHeight: '26px' }} className="font-semibold text-gray-800">
+        <AppstoreOutlined style={{ fontSize: '24px', color: '#323743', marginRight: '8px' }} />
+        <h2 style={{ fontSize: '18px', lineHeight: '26px' }} className="font-semibold text-gray-800">
           Overview
         </h2>
       </div>
@@ -60,22 +60,20 @@ const OverviewCards: React.FC = () => {
       {/* Cards Section */}
       <div className="flex flex-wrap justify-evenly gap-4">
         {cardData.map((data, index) => (
-         <Card
-         key={index}
-         className="w-64 rounded-lg" // Ensure this class is applied
-         bodyStyle={{
-           display: 'flex',
-           alignItems: 'center',
-           padding: '20px',
-           backgroundColor: data.backgroundColor,
-         }}
-         style={{
-           border: 'none',
-           boxShadow: 'none',
-           borderRadius: '10px',
-         }}
-       >
-       
+          <Card
+            key={index}
+            className="w-64 rounded-md"
+            bodyStyle={{
+              display: 'flex',
+              alignItems: 'center',
+              padding: '20px',
+              backgroundColor: data.backgroundColor,
+            }}
+            style={{
+              border: 'none', 
+              boxShadow: 'none', 
+            }}
+          >
             <div className="mr-4">{data.icon}</div>
             <div>
               <div style={{ color: data.titleColor, fontSize: '18px' }} className="font-medium">

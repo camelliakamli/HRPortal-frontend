@@ -8,6 +8,7 @@ import Documents from '../pages/admin/Documents';
 import Requests from '../pages/admin/Demandes';
 import Payroll from '../pages/admin/Payroll';
 import Hierarchy from '../pages/admin/Hierarchy';
+import AddEmployee from '../pages/admin/AddEmployee';
 
 const AppRoutes: React.FC = () => {
   return (
@@ -19,10 +20,12 @@ const AppRoutes: React.FC = () => {
       <Route path="/dashboard" element={<DashboardLayout />}>
         <Route path="home" element={<Home />} />
         <Route path="employees" element={<Employees />} />
+        <Route path="employees/add" element={<AddEmployee />} />
         <Route path="documents" element={<Documents />} />
         <Route path="requests" element={<Requests />} />
         <Route path="payroll" element={<Payroll />} />
         <Route path="hierarchy" element={<Hierarchy />} />
+        <Route path="add-employee" element={<AddEmployee />} />
       </Route>
     </Routes>
   );

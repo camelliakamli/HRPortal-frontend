@@ -17,7 +17,7 @@ const Header: React.FC = () => {
         <Bell size={24} className="text-slate-800" />
         
         <Link to="/dashboard/Profile">
-          <img src="/pfp.jpeg" width={32} className="rounded-full" alt="User" />
+          <img src="/blankAvatar.jpg" width={32} className="rounded-full" alt="User" />
         </Link>
         
         <span className="text-slate-800 font-semibold">Kadri Mohammed</span>

@@ -1,0 +1,29 @@
+/* login.css */
+
+.login-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: url("/src/assets/loginCorrect.jpg");
+  background-size: cover; /* Use 'cover' for the image to fully cover the container */
+  background-position: center; /* Focus on the bottom of the image */
+  background-repeat: no-repeat;
+  z-index: -1;
+  height: 100%;
+}
+
+.login-container {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  height: 100%;
+  padding-left: 5vw;
+  width: 100%;
+}
+
+.login-form-wrapper {
+  max-width: 500px;
+  width: 100%;
+}
