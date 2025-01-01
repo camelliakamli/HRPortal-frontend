@@ -1,5 +1,6 @@
-import React, { useState } from "react";
-import { Table, Dropdown, Menu, Button, Input, Select, Row, Col } from "antd";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { Table, Dropdown, Menu, Button, Input, Select, Row, Col, message } from "antd";
 import { MoreOutlined, SearchOutlined } from "@ant-design/icons";
 
 const { Option } = Select;
@@ -13,32 +14,36 @@ interface User {
 }
 
 const UsersTable: React.FC = () => {
-  const users: User[] = [
-    { key: '1', name: 'Houari Nour el houda', email: 'nourhouda@example.com', phone: '0721524781', position: 'Manager' },
-    { key: '2', name: 'Dib Aymen', email: 'dibaymen@example.com', phone: '0565741232', position: 'Developer' },
-    { key: '3', name: 'Bettayeb Chaimaa', email: 'chaimaabet@example.com', phone: '062144103965', position: 'Designer' },
-  ];
-
-  const [filteredData, setFilteredData] = useState(users);
+  const [users, setUsers] = useState<User[]>([]);
+  const [filteredData, setFilteredData] = useState<User[]>([]);
   const [searchText, setSearchText] = useState("");
   const [filterPosition, setFilterPosition] = useState<string | undefined>(undefined);
 
-  const handleSearch = (value: string) => {
-    setSearchText(value);
-    applyFilters(value, filterPosition);
-  };
+  // Fetch users from backend
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const response = await axios.get("http://localhost:8800/api/users/all-users");
+         // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const fetchedUsers = response.data.map((user: any) => ({
+          key: user._id,
+          name: `${user.first_name} ${user.last_name}`,
+          email: user.email,
+          phone: user.phone_number,
+          position: user.position,
+        }));
+        setUsers(fetchedUsers);
+        setFilteredData(fetchedUsers);
+      } catch (error) {
+        console.error("Error fetching users:", error);
+        message.error("Failed to fetch users.");
+      }
+    };
 
-  const handlePositionChange = (value: string) => {
-    setFilterPosition(value);
-    applyFilters(searchText, value);
-  };
+    fetchUsers();
+  }, []);
 
-  const clearFilters = () => {
-    setSearchText("");
-    setFilterPosition(undefined);
-    setFilteredData(users);
-  };
-
+  // Apply filters
   const applyFilters = (search: string, position: string | undefined) => {
     let updatedData = [...users];
 
@@ -57,28 +62,63 @@ const UsersTable: React.FC = () => {
 
     setFilteredData(updatedData);
   };
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const handleMenuClick = (e: any, user: User) => {
-    if (e.key === 'delete') {
-      console.log(`Delete user: ${user.name}`);
-    } else if (e.key === 'modify') {
+
+  const handleSearch = (value: string) => {
+    setSearchText(value);
+    applyFilters(value, filterPosition);
+  };
+
+  const handlePositionChange = (value: string) => {
+    setFilterPosition(value);
+    applyFilters(searchText, value);
+  };
+
+  const clearFilters = () => {
+    setSearchText("");
+    setFilterPosition(undefined);
+    setFilteredData(users);
+  };
+
+  
+   // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const handleMenuClick = async (e: any, user: User) => {
+    if (e.key === "delete") {
+      try {
+        await axios.delete(`http://localhost:5000/api/users/delete-user/${user.key}`);
+        message.success(`User ${user.name} deleted successfully.`);
+        setUsers(users.filter((u) => u.key !== user.key));
+        setFilteredData(filteredData.filter((u) => u.key !== user.key));
+      } catch (error) {
+        console.error("Error deleting user:", error);
+        message.error("Failed to delete user.");
+      }
+    } else if (e.key === "modify") {
       console.log(`Modify user: ${user.name}`);
+      // Handle modify action (e.g., open a modal for editing user details)
     }
   };
 
   const uniquePositions = Array.from(new Set(users.map((user) => user.position)));
 
   const columns = [
-    { title: 'Name', dataIndex: 'name', key: 'name' },
-    { title: 'Email', dataIndex: 'email', key: 'email' },
-    { title: 'Phone', dataIndex: 'phone', key: 'phone' },
-    { title: 'Position', dataIndex: 'position', key: 'position' },
+    { title: "Name", dataIndex: "name", key: "name" },
+    { title: "Email", dataIndex: "email", key: "email" },
+    { title: "Phone", dataIndex: "phone", key: "phone" },
+    { title: "Position", dataIndex: "position", key: "position" },
     {
-      title: 'Actions',
-      key: 'actions',
+      title: "Actions",
+      key: "actions",
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       render: (text: any, user: User) => (
-        <Dropdown overlay={<Menu onClick={(e) => handleMenuClick(e, user)}><Menu.Item key="modify">Modify</Menu.Item><Menu.Item key="delete">Delete</Menu.Item></Menu>} trigger={['click']}>
+        <Dropdown
+          overlay={
+            <Menu onClick={(e) => handleMenuClick(e, user)}>
+              <Menu.Item key="modify">Modify</Menu.Item>
+              <Menu.Item key="delete">Delete</Menu.Item>
+            </Menu>
+          }
+          trigger={["click"]}
+        >
           <Button icon={<MoreOutlined />} type="text" />
         </Dropdown>
       ),
@@ -87,7 +127,6 @@ const UsersTable: React.FC = () => {
 
   return (
     <div>
-      {/* Filters and search bar */}
       <Row gutter={16} style={{ marginBottom: "20px", alignItems: "center" }}>
         <Col span={8}>
           <Input
@@ -119,12 +158,7 @@ const UsersTable: React.FC = () => {
         </Col>
       </Row>
 
-      {/* Table */}
-      <Table
-        columns={columns}
-        dataSource={filteredData}
-        rowKey="key"
-      />
+      <Table columns={columns} dataSource={filteredData} rowKey="key" />
     </div>
   );
 };

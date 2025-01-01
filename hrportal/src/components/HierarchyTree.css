@@ -1,0 +1,59 @@
+.hierarchy-flow .react-flow__node.selected {
+  box-shadow: none;
+}
+
+.hierarchy-flow .react-flow__node.selected::before {
+  display: none;
+}
+
+.hierarchy-flow .react-flow__edge path {
+  stroke: #434893;
+  stroke-width: 2;
+}
+
+.hierarchy-flow .react-flow__edge-path {
+  stroke: #434893;
+}
+
+.hierarchy-flow .react-flow__edge-text {
+  fill: #434893;
+}
+
+.hierarchy-flow .react-flow__edge-textbg {
+  fill: white;
+}
+
+.hierarchy-flow .react-flow__connection-path {
+  stroke: #434893;
+}
+
+.hierarchy-flow .react-flow__edge-interactive {
+  stroke: #434893;
+}
+
+.hierarchy-flow .react-flow__connection {
+  stroke: #434893;
+}
+
+.hierarchy-flow .react-flow__edge-path-selector {
+  stroke: transparent;
+}
+
+.hierarchy-flow .react-flow__edge-text-selector {
+  fill: transparent;
+}
+
+.hierarchy-flow .react-flow__handle {
+  width: 8px;
+  height: 8px;
+  background-color: #434893;
+  border: 2px solid white;
+}
+
+.hierarchy-flow .react-flow__handle-top {
+  top: -4px;
+}
+
+.hierarchy-flow .react-flow__handle-bottom {
+  bottom: -4px;
+}
