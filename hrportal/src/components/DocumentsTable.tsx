@@ -1,165 +1,242 @@
-import React, { useState } from "react";
-import { Table, Dropdown, Menu, Input, Select, Row, Col, Button } from "antd";
-import { EllipsisOutlined, SearchOutlined } from "@ant-design/icons"; // Added SearchOutlined icon
-import { AiOutlineFilePdf, AiOutlineFileWord, AiOutlineFileText } from "react-icons/ai"; // Added AiOutlineFileWord for Word icon
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { Table, Dropdown, Menu, Input, Select, Row, Col, Button, message } from "antd";
+import { EllipsisOutlined, SearchOutlined } from "@ant-design/icons";
+import { AiOutlineFilePdf, AiOutlineFileWord, AiOutlineFileText } from "react-icons/ai";
 
 const { Option } = Select;
 
 const DocumentsTable: React.FC = () => {
-  // Sample data
-  const data = [
-    {
-      key: "1",
-      documentName: { name: "FicheDePoste.pdf", size: "2.3 MB", type: "ficheDePoste" },
-      type: "Fiche de Poste",
-      employeeName: "Houari Aymen",
-      dateUploaded: "2024-12-29",
-    },
-    {
-      key: "2",
-      documentName: { name: "FicheDePaie.docs", size: "1.2 MB", type: "ficheDePaie" }, // Word document example
-      type: "Fiche de Paie",
-      employeeName: "Dib Chaimaa",
-      dateUploaded: "2024-12-28",
-    },
-  ];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+ const [documents, setDocuments] = useState<any[]>([]); 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+ const [filteredData, setFilteredData] = useState<any[]>([]); 
+ const [searchText, setSearchText] = useState("");
+ const [filterType, setFilterType] = useState<string | null>("all");
 
-  const [filteredData, setFilteredData] = useState(data);
-  const [searchText, setSearchText] = useState("");
-  const [filterType, setFilterType] = useState<string | null>("all");
+ // Fetch documents from backend
+ useEffect(() => {
+   const fetchDocuments = async () => {
+     try {
+       const response = await axios.get("http://localhost:8800/api/documents/admin/all-documents");
+       setDocuments(response.data.documents);
+       setFilteredData(response.data.documents);
+     } catch (error) {
+       console.error("Error fetching documents:", error);
+       message.error("Failed to fetch documents.");
+     }
+   };
+   fetchDocuments();
+ }, []);
 
-  const handleSearch = (value: string) => {
-    setSearchText(value);
-    applyFilters(value, filterType);
-  };
+ // Apply filters
+ const applyFilters = (search: string, type: string | null) => {
+   let updatedData = [...documents];
 
-  const handleTypeChange = (value: string) => {
-    setFilterType(value);
-    applyFilters(searchText, value);
-  };
+   if (search) {
+     updatedData = updatedData.filter(
+       (item) =>
+         item.documentName?.toLowerCase().includes(search.toLowerCase()) ||
+         item.user_id?.email?.toLowerCase().includes(search.toLowerCase())
+     );
+   }
 
-  const clearFilters = () => {
-    setSearchText("");
-    setFilterType("all");
-    setFilteredData(data);
-  };
+   if (type && type !== "all") {
+     updatedData = updatedData.filter((item) => item.type === type);
+   }
 
-  const applyFilters = (search: string, type: string | null) => {
-    let updatedData = [...data];
+   setFilteredData(updatedData);
+ };
 
-    // Apply search filter: checks both documentName and employeeName
-    if (search) {
-      updatedData = updatedData.filter((item) =>
-        item.documentName.name.toLowerCase().includes(search.toLowerCase()) ||
-        item.employeeName.toLowerCase().includes(search.toLowerCase())
-      );
-    }
+ const handleSearch = (value: string) => {
+   setSearchText(value);
+   applyFilters(value, filterType);
+ };
 
-    // Apply type filter
-    if (type && type !== "all") {
-      updatedData = updatedData.filter((item) => item.documentName.type === type);
-    }
+ const handleTypeChange = (value: string) => {
+   setFilterType(value);
+   applyFilters(searchText, value);
+ };
 
-    setFilteredData(updatedData);
-  };
+ const clearFilters = () => {
+   setSearchText("");
+   setFilterType("all");
+   setFilteredData(documents);
+ };
 
-  const actionMenu = (
-    <Menu>
-      <Menu.Item key="1">View</Menu.Item>
-      <Menu.Item key="2">Download</Menu.Item>
-      <Menu.Item key="2">Distribuer</Menu.Item>
-      <Menu.Item key="3">Delete</Menu.Item>
-    </Menu>
-  );
+ // Action handlers
+ const handleView = async (documentId: string) => {
+   try {
+     const response = await axios.get(`http://localhost:8800/api/documents/view/${documentId}`, {
+       responseType: 'blob'
+     });
+     //WHAT IS BLOB? A Blob object represents a file-like object of immutable, raw data. 
+     // Create blob URL and open in new window
+     const blob = new Blob([response.data], { 
+       type: response.headers['content-type'] 
+     });
+     const url = window.URL.createObjectURL(blob);
+     window.open(url, '_blank');
+   } catch (error) {
+     console.error("Error viewing document:", error);
+     message.error("Failed to view document.");
+   }
+ };
 
-  // Define columns
-  const columns = [
-    {
-      title: "Document Name",
-      dataIndex: "documentName",
-      render: (document: { name: string; size: string; type: string }) => (
-        <div className="flex items-center gap-3">
-          {/* Icon for document type */}
-          {document.name.toLowerCase().endsWith(".pdf") ? (
-            <AiOutlineFilePdf size={24} color="#d9534f" />
-          ) : document.name.toLowerCase().endsWith(".docx") ? (
-            <AiOutlineFileWord size={24} color="#0078d4" />
-          ) : (
-            <AiOutlineFileText size={24} color="#5cb85c" />
-          )}
-          <div>
-            <div style={{ color: "#171A1F", fontWeight: 500 }}>{document.name}</div>
-            <div style={{ color: "#757575", fontSize: "12px" }}>{document.size}</div>
-          </div>
-        </div>
-      ),
-    },
-    {
-      title: "Type",
-      dataIndex: "type",
-    },
-    {
-      title: "Employee Name",
-      dataIndex: "employeeName",
-    },
-    {
-      title: "Date Uploaded",
-      dataIndex: "dateUploaded",
-    },
-    {
-      title: "",
-      dataIndex: "actions",
-      render: () => (
-        <Dropdown overlay={actionMenu} trigger={["click"]}>
-          <EllipsisOutlined style={{ fontSize: "20px", cursor: "pointer" }} />
-        </Dropdown>
-      ),
-      width: 50,
-    },
-  ];
+ const handleDownload = async (documentId: string, fileName: string) => {
+   try {
+     const response = await axios.get(`http://localhost:8800/api/documents/view/${documentId}`, {
+       responseType: 'blob'
+     });
+     
+     // Create download link
+     const blob = new Blob([response.data], { 
+       type: response.headers['content-type'] 
+     });
+     const url = window.URL.createObjectURL(blob);
+     const link = document.createElement('a');
+     link.href = url;
+     link.download = fileName || 'document';
+     document.body.appendChild(link);
+     link.click();
+     document.body.removeChild(link);
+     window.URL.revokeObjectURL(url);
+   } catch (error) {
+     console.error("Error downloading document:", error);
+     message.error("Failed to download document.");
+   }
+ };
 
-  return (
-    <div>
-      {/* Filters and search bar */}
-      <Row gutter={16} style={{ marginBottom: "20px", alignItems: "center" }}>
-        <Col span={8}>
-          <Input
-            placeholder="Search ..."
-            value={searchText}
-            onChange={(e) => handleSearch(e.target.value)}
-            prefix={<SearchOutlined />} // Added search icon as prefix
-          />
-        </Col>
-        <Col span={4}>
-          <Select
-            placeholder="Document Type"
-            style={{ width: "100%" }}
-            onChange={handleTypeChange}
-            value={filterType}
-            allowClear
-          >
-            <Option value="all">All</Option>
-            <Option value="ficheDePoste">Fiche de Poste</Option>
-            <Option value="ficheDePaie">Fiche de Paie</Option>
-          </Select>
-        </Col>
-        <Col span={4}>
-          <Button type="link" onClick={clearFilters}>
-            Clear Filters
-          </Button>
-        </Col>
-      </Row>
+ const handleDelete = async (documentId: string) => {
+   try {
+     const response = await axios.delete(`http://localhost:8800/api/documents/document/${documentId}`);
+     message.success(response.data.message);
+     setDocuments(documents.filter((doc) => doc._id !== documentId));
+     setFilteredData(filteredData.filter((doc) => doc._id !== documentId));
+   } 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+   catch (error) {
+     message.error("Failed to delete document.");
+   }
+ };
 
-      {/* Table */}
-      <Table
-        dataSource={filteredData}
-        columns={columns}
-        pagination={{ pageSize: 5 }}
-        rowSelection={{ type: "checkbox" }}
-        style={{ background: "white" }}
-      />
-    </div>
-  );
+ // eslint-disable-next-line @typescript-eslint/no-explicit-any
+ const actionMenu = (record: any) => (
+   <Menu>
+     <Menu.Item key="1" onClick={() => handleView(record._id)}>
+       View
+     </Menu.Item>
+     <Menu.Item 
+       key="2" 
+       onClick={() => handleDownload(record._id, record.file_path.split('\\').pop())}
+     >
+       Download
+     </Menu.Item>
+     <Menu.Item key="3">Distribuer</Menu.Item>
+     <Menu.Item key="4" onClick={() => handleDelete(record._id)}>
+       Delete
+     </Menu.Item>
+   </Menu>
+ );
+
+ // Define columns
+ const columns = [
+   {
+     title: "Document Name",
+     dataIndex: "file_path",
+     render: (file_path: string) => (
+       <div className="flex items-center gap-3">
+         {file_path.toLowerCase().endsWith(".pdf") ? (
+           <AiOutlineFilePdf size={24} color="#d9534f" />
+         ) : file_path.toLowerCase().endsWith(".docx") ? (
+           <AiOutlineFileWord size={24} color="#0078d4" />
+         ) : (
+           <AiOutlineFileText size={24} color="#5cb85c" />
+         )}
+         <div>
+           <div style={{ color: "#171A1F", fontWeight: 500 }}>
+             {file_path.split("\\").pop()}
+           </div>
+         </div>
+       </div>
+     ),
+   },
+   {
+     title: "Type",
+     dataIndex: "type",
+   },
+   {
+     title: "Employee Name",
+     dataIndex: "user_id",
+     render: (user_id: { first_name: string, last_name: string }) => `${user_id.first_name} ${user_id.last_name}`,
+   },
+   {
+     title: "Date Uploaded",
+     dataIndex: "upload_date",
+     render: (upload_date: string) => {
+       const date = new Date(upload_date);
+       return date.toLocaleDateString('en-US', {
+         year: 'numeric',
+         month: 'long',
+         day: 'numeric'
+       });
+     },
+   },
+   {
+     title: "",
+     dataIndex: "actions",
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     render: (_: any, record: any) => (
+       <Dropdown overlay={() => actionMenu(record)} trigger={["click"]}>
+         <EllipsisOutlined style={{ fontSize: "20px", cursor: "pointer" }} />
+       </Dropdown>
+     ),
+     width: 50,
+   },
+ ];
+
+
+ return (
+   <div>
+     <Row gutter={16} style={{ marginBottom: "20px", alignItems: "center" }}>
+       <Col span={8}>
+         <Input
+           placeholder="Search ..."
+           value={searchText}
+           onChange={(e) => handleSearch(e.target.value)}
+           prefix={<SearchOutlined />}
+         />
+       </Col>
+       <Col span={4}>
+         <Select
+           placeholder="Document Type"
+           style={{ width: "100%" }}
+           onChange={handleTypeChange}
+           value={filterType}
+           allowClear
+         >
+           <Option value="all">All</Option>
+           <Option value="ficheDePoste">Fiche de Poste</Option>
+           <Option value="ficheDePaie">Fiche de Paie</Option>
+           <Option value="contratDeTravail">Contrat de Travail</Option>
+         </Select>
+       </Col>
+       <Col span={4}>
+         <Button type="link" onClick={clearFilters}>
+           Clear Filters
+         </Button>
+       </Col>
+     </Row>
+
+     <Table
+       dataSource={filteredData}
+       columns={columns}
+       pagination={{ pageSize: 5 }}
+       rowSelection={{ type: "checkbox" }}
+       style={{ background: "white" }}
+     />
+   </div>
+ );
 };
 
 export default DocumentsTable;

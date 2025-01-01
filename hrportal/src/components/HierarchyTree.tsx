@@ -66,10 +66,13 @@ const createNodesAndEdges = (data: User[]) => {
         data: {
           label: (
             <div className="flex flex-col items-center p-4">
-              <div className="bg-white rounded-lg shadow-md p-4 w-48 relative">
+              <div className="bg-white rounded-lg shadow-md pl-2 pr-2 pb-3 w-48 relative">
                 <div 
                   className="w-12 h-12 rounded-full absolute -top-6 left-1/2 transform -translate-x-1/2"
-                  style={{ backgroundColor: node.color }}
+                  style={{ 
+                    backgroundColor: node.color,
+                    border: '3px solid white', 
+                  }}
                 />
                 <div className="mt-8">
                   <p className="font-semibold text-gray-800 text-center mb-1">{node.name}</p>
@@ -117,7 +120,7 @@ const HierarchyTree: React.FC = () => {
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
 
   return (
-    <div className="w-full h-screen bg-gray-50">
+    <div style={{ height: '600px' }} className="w-full bg-gray-100 rounded-md">
       <ReactFlow
         nodes={nodes}
         edges={edges}
@@ -128,8 +131,16 @@ const HierarchyTree: React.FC = () => {
         nodesConnectable={false}
         elementsSelectable={true}
         className="hierarchy-flow"
+        fitViewOptions={{ padding: 0.1 }}
+        minZoom={0.4}
+        maxZoom={1.5}
       >
-        <Background color="#f0f0f0" gap={16} />
+        <Background 
+          
+          gap={12}
+          size={1}
+          color="#9CA3AF"
+        />
         <Controls />
       </ReactFlow>
     </div>
