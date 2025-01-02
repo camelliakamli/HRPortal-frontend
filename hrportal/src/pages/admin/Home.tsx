@@ -1,7 +1,7 @@
 import React from 'react';
 import OverviewCards from '../../components/HomeComponents/OverviewCards';
 import PayrollPieChart from '../../components/HomeComponents/PayrollPieChart';
-
+import DemandesTable from '../../components/DemandesTable';
 const Home: React.FC = () => {
   const payrollData = {
     paid: 62,
@@ -23,9 +23,9 @@ const Home: React.FC = () => {
         {/* Left Column: Table */}
         <div className="lg:col-span-2 bg-white rounded-lg p-4 shadow-sm">
           {/* Placeholder for the table */}
-          <h2 className="text-lg font-bold mb-4">Employee Details Table</h2>
+          <h2 style={{ fontSize: '18px', lineHeight: '26px' }} className="font-bold text-gray-800 mb-4">Latest Requests</h2>
           <div className="overflow-x-auto">
-          
+          <DemandesTable />
           </div>
         </div>
 

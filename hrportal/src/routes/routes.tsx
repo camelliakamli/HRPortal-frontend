@@ -9,6 +9,7 @@ import Requests from '../pages/admin/Demandes';
 import Payroll from '../pages/admin/Payroll';
 import Hierarchy from '../pages/admin/Hierarchy';
 import AddEmployee from '../pages/admin/AddEmployee';
+import ViewEmployeeProfile from '../pages/admin/ViewEmployeeProfile';
 
 const AppRoutes: React.FC = () => {
   return (
@@ -26,6 +27,7 @@ const AppRoutes: React.FC = () => {
         <Route path="payroll" element={<Payroll />} />
         <Route path="hierarchy" element={<Hierarchy />} />
         <Route path="add-employee" element={<AddEmployee />} />
+        <Route path="view-employee-profile" element={<ViewEmployeeProfile />} />
       </Route>
     </Routes>
   );

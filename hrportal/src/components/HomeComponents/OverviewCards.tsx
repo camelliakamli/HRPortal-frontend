@@ -52,7 +52,7 @@ const OverviewCards: React.FC = () => {
       {/* Title Section */}
       <div className="flex items-center">
         <AppstoreOutlined style={{ fontSize: '24px', color: '#323743', marginRight: '8px' }} />
-        <h2 style={{ fontSize: '18px', lineHeight: '26px' }} className="font-semibold text-gray-800">
+        <h2 style={{ fontSize: '18px', lineHeight: '26px' }} className="font-bold text-gray-800">
           Overview
         </h2>
       </div>

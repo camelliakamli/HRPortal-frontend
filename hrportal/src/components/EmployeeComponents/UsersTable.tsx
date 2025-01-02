@@ -113,6 +113,7 @@ const UsersTable: React.FC = () => {
         <Dropdown
           overlay={
             <Menu onClick={(e) => handleMenuClick(e, user)}>
+              <Menu.Item key="modify">View</Menu.Item>
               <Menu.Item key="modify">Modify</Menu.Item>
               <Menu.Item key="delete">Delete</Menu.Item>
             </Menu>

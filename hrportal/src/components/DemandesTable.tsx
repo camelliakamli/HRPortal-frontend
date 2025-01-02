@@ -1,43 +1,53 @@
-import React, { useState } from "react";
-import { Table, Tag, Dropdown, Menu, Button, Input, Select, Row, Col } from "antd";
+import React, { useState, useEffect } from "react";
+import { Table, Tag, Dropdown, Menu, Button, Input, Select, Row, Col, message } from "antd";
 import { EllipsisOutlined, SearchOutlined } from "@ant-design/icons";
+import axios from "axios";
 
 const { Option } = Select;
 
-const DemandesTable: React.FC = () => {
-  // Sample static data
-  const data = [
-    {
-      key: "1",
-      employeeName: "Kadri Siham",
-      requestType: "Congé",
-      dateRequested: "2024-01-01",
-      duration: "5 days",
-      status: "pending",
-    },
-    {
-      key: "2",
-      employeeName: "Dib Aymen",
-      requestType: "Sortie",
-      dateRequested: "2024-02-15",
-      duration: "2 hours",
-      status: "approved",
-    },
-    {
-      key: "3",
-      employeeName: "Berhoune Chahd",
-      requestType: "Télétravail",
-      dateRequested: "2024-03-10",
-      duration: "3 days",
-      status: "rejected",
-    },
-  ];
+interface Demande {
+  _id: string;
+  user_id: {
+    first_name: string;
+    last_name: string;
+  };
+  type: string;
+  status: string;
+  start_date: string;
+  duration: string;
+  request_date: string;
+}
 
-  // State for filtered data and filters
-  const [filteredData, setFilteredData] = useState(data);
+const DemandesTable: React.FC = () => {
+  const [demandes, setDemandes] = useState<Demande[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [filteredData, setFilteredData] = useState<Demande[]>([]);
   const [searchText, setSearchText] = useState("");
   const [filterStatus, setFilterStatus] = useState<string | null>("all");
   const [filterRequestType, setFilterRequestType] = useState<string | null>("all");
+
+  // Fetch all demandes
+  const fetchDemandes = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.get('http://localhost:8800/api/demandes/all-demandes');
+      const formattedDemandes = response.data.map((demande: Demande) => ({
+        ...demande,
+        key: demande._id,
+      }));
+      setDemandes(formattedDemandes);
+      setFilteredData(formattedDemandes);
+    } catch (error) {
+      console.error('Error fetching demandes:', error);
+      message.error('Failed to fetch demandes.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchDemandes();
+  }, []);
 
   // Handle search
   const handleSearch = (value: string) => {
@@ -61,7 +71,7 @@ const DemandesTable: React.FC = () => {
     setSearchText("");
     setFilterStatus("all");
     setFilterRequestType("all");
-    setFilteredData(data);
+    setFilteredData(demandes);
   };
 
   // Apply filters
@@ -70,20 +80,22 @@ const DemandesTable: React.FC = () => {
     status: string | null,
     requestType: string | null
   ) => {
-    let updatedData = [...data];
+    let updatedData = [...demandes];
 
     if (search) {
       updatedData = updatedData.filter((item) =>
-        item.employeeName.toLowerCase().includes(search.toLowerCase())
+        `${item.user_id.first_name} ${item.user_id.last_name}`
+          .toLowerCase()
+          .includes(search.toLowerCase())
       );
     }
 
     if (status && status !== "all") {
-      updatedData = updatedData.filter((item) => item.status === status);
+      updatedData = updatedData.filter((item) => item.status.toLowerCase() === status.toLowerCase());
     }
 
     if (requestType && requestType !== "all") {
-      updatedData = updatedData.filter((item) => item.requestType === requestType);
+      updatedData = updatedData.filter((item) => item.type === requestType);
     }
 
     setFilteredData(updatedData);
@@ -93,18 +105,19 @@ const DemandesTable: React.FC = () => {
   const columns = [
     {
       title: "Employee Name",
-      dataIndex: "employeeName",
       key: "employeeName",
+      render: (record: Demande) => `${record.user_id.first_name} ${record.user_id.last_name}`,
     },
     {
       title: "Request Type",
-      dataIndex: "requestType",
-      key: "requestType",
+      dataIndex: "type",
+      key: "type",
     },
     {
       title: "Date Requested",
-      dataIndex: "dateRequested",
-      key: "dateRequested",
+      dataIndex: "request_date",
+      key: "request_date",
+      render: (date: string) => new Date(date).toLocaleDateString(),
     },
     {
       title: "Duration",
@@ -117,8 +130,8 @@ const DemandesTable: React.FC = () => {
       key: "status",
       render: (status: string) => {
         let color = "blue";
-        if (status === "approved") color = "green";
-        else if (status === "rejected") color = "red";
+        if (status.toLowerCase() === "approved") color = "green";
+        else if (status.toLowerCase() === "rejected") color = "red";
         return <Tag color={color}>{status.toUpperCase()}</Tag>;
       },
     },
@@ -194,6 +207,7 @@ const DemandesTable: React.FC = () => {
 
       {/* Table */}
       <Table
+        loading={loading}
         rowSelection={{ type: "checkbox" }}
         columns={columns}
         dataSource={filteredData}
@@ -204,3 +218,4 @@ const DemandesTable: React.FC = () => {
 };
 
 export default DemandesTable;
+
